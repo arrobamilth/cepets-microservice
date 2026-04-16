@@ -1,0 +1,9 @@
+node_modules
+coverage
+.DS_Store
+*.log
+requirements.txt
+services/*/data/*.json
+services/image-service/uploads/*
+!services/image-service/uploads/.gitkeep
+.env.production

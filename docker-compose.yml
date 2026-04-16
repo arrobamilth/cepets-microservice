@@ -1,0 +1,134 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: cepets
+      POSTGRES_USER: cepets
+      POSTGRES_PASSWORD: cepets
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cepets -d cepets"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: docker/node-service.Dockerfile
+    command: node services/auth-service/src/index.js
+    environment:
+      AUTH_SERVICE_PORT: 4101
+      USER_SERVICE_URL: http://user-service:4102
+      DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "4101:4101"
+
+  user-service:
+    build:
+      context: .
+      dockerfile: docker/node-service.Dockerfile
+    command: node services/user-service/src/index.js
+    environment:
+      USER_SERVICE_PORT: 4102
+      AUTH_SERVICE_URL: http://auth-service:4101
+      DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "4102:4102"
+
+  pet-service:
+    build:
+      context: .
+      dockerfile: docker/node-service.Dockerfile
+    command: node services/pet-service/src/index.js
+    environment:
+      PET_SERVICE_PORT: 4103
+      IMAGE_SERVICE_URL: http://image-service:4104
+      USER_SERVICE_URL: http://user-service:4102
+      ADOPTION_SERVICE_URL: http://adoption-service:4105
+      DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "4103:4103"
+
+  image-service:
+    build:
+      context: .
+      dockerfile: docker/node-service.Dockerfile
+    command: node services/image-service/src/index.js
+    environment:
+      IMAGE_SERVICE_PORT: 4104
+      DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - image-uploads:/app/services/image-service/uploads
+    ports:
+      - "4104:4104"
+
+  adoption-service:
+    build:
+      context: .
+      dockerfile: docker/node-service.Dockerfile
+    command: node services/adoption-service/src/index.js
+    environment:
+      ADOPTION_SERVICE_PORT: 4105
+      PET_SERVICE_URL: http://pet-service:4103
+      USER_SERVICE_URL: http://user-service:4102
+      DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "4105:4105"
+
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/node-service.Dockerfile
+    command: node services/gateway/src/index.js
+    environment:
+      GATEWAY_PORT: 4000
+      AUTH_SERVICE_URL: http://auth-service:4101
+      USER_SERVICE_URL: http://user-service:4102
+      PET_SERVICE_URL: http://pet-service:4103
+      IMAGE_SERVICE_URL: http://image-service:4104
+      ADOPTION_SERVICE_URL: http://adoption-service:4105
+      DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
+    depends_on:
+      - auth-service
+      - user-service
+      - pet-service
+      - image-service
+      - adoption-service
+    ports:
+      - "4000:4000"
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/node-service.Dockerfile
+    command: node apps/web/server.js
+    environment:
+      WEB_PORT: 3000
+      CEPETS_API_URL: http://localhost:4000/api
+    depends_on:
+      - gateway
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres-data:
+  image-uploads:

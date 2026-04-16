@@ -1,0 +1,16 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "docker/node-service.Dockerfile"
+watchPatterns = [
+  "/package.json",
+  "/package-lock.json",
+  "/docker/node-service.Dockerfile",
+  "/packages/shared/**",
+  "/railway/image-service.toml",
+  "/services/image-service/**"
+]
+
+[deploy]
+startCommand = "node services/image-service/src/index.js"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10

@@ -1,0 +1,43 @@
+{
+  "name": "cepets",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plataforma web CEPETS para gestion de adopcion de mascotas con arquitectura de microservicios.",
+  "main": "scripts/dev.js",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "start": "node scripts/dev.js",
+    "db:init": "node scripts/init-db.js",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose stop postgres",
+    "deploy:prod": "docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build",
+    "deploy:prod:down": "docker compose --env-file .env.production -f docker-compose.prod.yml down",
+    "deploy:prod:logs": "docker compose --env-file .env.production -f docker-compose.prod.yml logs -f reverse-proxy web gateway auth-service user-service pet-service image-service adoption-service",
+    "start:web": "node apps/web/server.js",
+    "start:gateway": "node services/gateway/src/index.js",
+    "start:auth": "node services/auth-service/src/index.js",
+    "start:users": "node services/user-service/src/index.js",
+    "start:pets": "node services/pet-service/src/index.js",
+    "start:images": "node services/image-service/src/index.js",
+    "start:adoptions": "node services/adoption-service/src/index.js",
+    "smoke": "node scripts/smoke-test.js"
+  },
+  "keywords": [
+    "cepets",
+    "microservices",
+    "pet-adoption",
+    "nodejs"
+  ],
+  "author": "Codex",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "http-proxy-middleware": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "pg": "^8.20.0"
+  }
+}

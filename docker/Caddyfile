@@ -1,0 +1,11 @@
+{$SITE_ADDRESS::80} {
+  encode gzip zstd
+
+  handle /api/* {
+    reverse_proxy gateway:4000
+  }
+
+  handle {
+    reverse_proxy web:3000
+  }
+}
