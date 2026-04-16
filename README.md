@@ -1,5 +1,4 @@
 # CEPETS
-
 CEPETS es una plataforma web para la gestion de adopcion responsable de mascotas. La solucion fue construida a partir de los requerimientos del documento `PIMER ENTREGABLE - PROYECTO TENDENCIAS ING SOFTWARE.pdf` y se implemento con una arquitectura de microservicios.
 
 ## Arquitectura
