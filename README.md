@@ -131,6 +131,8 @@ npm run deploy:prod
 
 La documentacion paso a paso esta en [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
+Para publicar en un VPS de Oracle Cloud con Docker y Caddy, sigue [docs/ORACLE_VPS.md](docs/ORACLE_VPS.md).
+
 ## Railway
 
 Tambien deje preparada una configuracion especifica para Railway, incluyendo archivos `config as code` por servicio y una guia de variables/red privada:

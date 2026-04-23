@@ -3,6 +3,7 @@ const path = require('node:path');
 
 const app = express();
 const port = Number(process.env.WEB_PORT || 3000);
+const host = process.env.HOST || '0.0.0.0';
 const publicDir = path.resolve(__dirname, 'public');
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -22,6 +23,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(publicDir, 'index.html'));
 });
 
-app.listen(port, () => {
-  console.log(`Frontend web disponible en http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`Frontend web escuchando en http://${host}:${port}`);
 });
