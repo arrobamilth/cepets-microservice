@@ -17,6 +17,7 @@ const {
 
 const app = express();
 const port = Number(process.env.ADOPTION_SERVICE_PORT || process.env.PORT || 4105);
+const host = process.env.HOST || '0.0.0.0';
 const petServiceUrl = buildServiceUrl('PET_SERVICE_URL', 4103);
 const userServiceUrl = buildServiceUrl('USER_SERVICE_URL', 4102);
 
@@ -356,8 +357,8 @@ app.post('/internal/adoptions/pets/:petId/cleanup', requireInternalService, asyn
 
 initializeDatabase()
   .then(() => {
-    app.listen(port, () => {
-      console.log(`Adoption service escuchando en el puerto ${port}`);
+    app.listen(port, host, () => {
+      console.log(`Adoption service escuchando en http://${host}:${port}`);
     });
   })
   .catch((error) => {

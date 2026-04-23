@@ -5,6 +5,7 @@ const { buildServiceUrl, nowIso } = require('../../../packages/shared/src');
 
 const app = express();
 const port = Number(process.env.GATEWAY_PORT || process.env.PORT || 4000);
+const host = process.env.HOST || '0.0.0.0';
 
 function createServiceProxy(target, servicePrefix) {
   return createProxyMiddleware({
@@ -49,6 +50,6 @@ app.use('/api/pets', createServiceProxy(buildServiceUrl('PET_SERVICE_URL', 4103)
 app.use('/api/images', createServiceProxy(buildServiceUrl('IMAGE_SERVICE_URL', 4104), 'images'));
 app.use('/api/adoptions', createServiceProxy(buildServiceUrl('ADOPTION_SERVICE_URL', 4105), 'adoptions'));
 
-app.listen(port, () => {
-  console.log(`Gateway escuchando en el puerto ${port}`);
+app.listen(port, host, () => {
+  console.log(`Gateway escuchando en http://${host}:${port}`);
 });

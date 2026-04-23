@@ -25,6 +25,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       AUTH_SERVICE_PORT: 4101
+      HOST: 0.0.0.0
       USER_SERVICE_URL: http://user-service:4102
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       JWT_SECRET: ${JWT_SECRET}
@@ -42,6 +43,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       USER_SERVICE_PORT: 4102
+      HOST: 0.0.0.0
       AUTH_SERVICE_URL: http://auth-service:4101
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       JWT_SECRET: ${JWT_SECRET}
@@ -59,6 +61,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       PET_SERVICE_PORT: 4103
+      HOST: 0.0.0.0
       IMAGE_SERVICE_URL: http://image-service:4104
       USER_SERVICE_URL: http://user-service:4102
       ADOPTION_SERVICE_URL: http://adoption-service:4105
@@ -78,6 +81,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       IMAGE_SERVICE_PORT: 4104
+      HOST: 0.0.0.0
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       JWT_SECRET: ${JWT_SECRET}
       INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY}
@@ -96,6 +100,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       ADOPTION_SERVICE_PORT: 4105
+      HOST: 0.0.0.0
       PET_SERVICE_URL: http://pet-service:4103
       USER_SERVICE_URL: http://user-service:4102
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
@@ -114,6 +119,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       GATEWAY_PORT: 4000
+      HOST: 0.0.0.0
       AUTH_SERVICE_URL: http://auth-service:4101
       USER_SERVICE_URL: http://user-service:4102
       PET_SERVICE_URL: http://pet-service:4103
@@ -135,6 +141,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       WEB_PORT: 3000
+      HOST: 0.0.0.0
       CEPETS_API_URL: /api
     depends_on:
       - gateway

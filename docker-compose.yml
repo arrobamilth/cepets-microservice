@@ -22,6 +22,7 @@ services:
     command: node services/auth-service/src/index.js
     environment:
       AUTH_SERVICE_PORT: 4101
+      HOST: 0.0.0.0
       USER_SERVICE_URL: http://user-service:4102
       DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
     depends_on:
@@ -37,6 +38,7 @@ services:
     command: node services/user-service/src/index.js
     environment:
       USER_SERVICE_PORT: 4102
+      HOST: 0.0.0.0
       AUTH_SERVICE_URL: http://auth-service:4101
       DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
     depends_on:
@@ -52,6 +54,7 @@ services:
     command: node services/pet-service/src/index.js
     environment:
       PET_SERVICE_PORT: 4103
+      HOST: 0.0.0.0
       IMAGE_SERVICE_URL: http://image-service:4104
       USER_SERVICE_URL: http://user-service:4102
       ADOPTION_SERVICE_URL: http://adoption-service:4105
@@ -69,6 +72,7 @@ services:
     command: node services/image-service/src/index.js
     environment:
       IMAGE_SERVICE_PORT: 4104
+      HOST: 0.0.0.0
       DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
     depends_on:
       postgres:
@@ -85,6 +89,7 @@ services:
     command: node services/adoption-service/src/index.js
     environment:
       ADOPTION_SERVICE_PORT: 4105
+      HOST: 0.0.0.0
       PET_SERVICE_URL: http://pet-service:4103
       USER_SERVICE_URL: http://user-service:4102
       DATABASE_URL: postgresql://cepets:cepets@postgres:5432/cepets
@@ -101,6 +106,7 @@ services:
     command: node services/gateway/src/index.js
     environment:
       GATEWAY_PORT: 4000
+      HOST: 0.0.0.0
       AUTH_SERVICE_URL: http://auth-service:4101
       USER_SERVICE_URL: http://user-service:4102
       PET_SERVICE_URL: http://pet-service:4103
@@ -123,6 +129,7 @@ services:
     command: node apps/web/server.js
     environment:
       WEB_PORT: 3000
+      HOST: 0.0.0.0
       CEPETS_API_URL: http://localhost:4000/api
     depends_on:
       - gateway

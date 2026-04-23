@@ -15,6 +15,7 @@ const {
 
 const app = express();
 const port = Number(process.env.USER_SERVICE_PORT || process.env.PORT || 4102);
+const host = process.env.HOST || '0.0.0.0';
 const authServiceUrl = buildServiceUrl('AUTH_SERVICE_URL', 4101);
 
 function normalizeUser(user) {
@@ -318,8 +319,8 @@ app.get('/internal/users/:id', requireInternalService, async (req, res) => {
 
 initializeDatabase()
   .then(() => {
-    app.listen(port, () => {
-      console.log(`User service escuchando en el puerto ${port}`);
+    app.listen(port, host, () => {
+      console.log(`User service escuchando en http://${host}:${port}`);
     });
   })
   .catch((error) => {

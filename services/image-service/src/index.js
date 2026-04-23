@@ -20,6 +20,7 @@ const {
 
 const app = express();
 const port = Number(process.env.IMAGE_SERVICE_PORT || process.env.PORT || 4104);
+const host = process.env.HOST || '0.0.0.0';
 const uploadsDir = path.resolve(__dirname, '../uploads');
 
 ensureDir(uploadsDir);
@@ -311,8 +312,8 @@ ensureSeedImages();
 
 initializeDatabase()
   .then(() => {
-    app.listen(port, () => {
-      console.log(`Image service escuchando en el puerto ${port}`);
+    app.listen(port, host, () => {
+      console.log(`Image service escuchando en http://${host}:${port}`);
     });
   })
   .catch((error) => {

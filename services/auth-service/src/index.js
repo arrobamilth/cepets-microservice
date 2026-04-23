@@ -18,6 +18,7 @@ const {
 
 const app = express();
 const port = Number(process.env.AUTH_SERVICE_PORT || process.env.PORT || 4101);
+const host = process.env.HOST || '0.0.0.0';
 const userServiceUrl = buildServiceUrl('USER_SERVICE_URL', 4102);
 
 function normalizeCredential(account) {
@@ -328,8 +329,8 @@ app.patch('/internal/auth/accounts/:userId/profile', requireInternalService, asy
 
 initializeDatabase()
   .then(() => {
-    app.listen(port, () => {
-      console.log(`Auth service escuchando en el puerto ${port}`);
+    app.listen(port, host, () => {
+      console.log(`Auth service escuchando en http://${host}:${port}`);
     });
   })
   .catch((error) => {
