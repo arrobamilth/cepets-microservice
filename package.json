@@ -6,6 +6,7 @@
   "main": "scripts/dev.js",
   "scripts": {
     "dev": "node scripts/dev.js",
+    "dev:with-db": "npm run db:up && npm run db:init && npm run dev",
     "start": "node scripts/dev.js",
     "db:init": "node scripts/init-db.js",
     "db:up": "docker compose up -d postgres",

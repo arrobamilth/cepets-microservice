@@ -380,7 +380,7 @@ function renderPublicHeader() {
       <nav class="public-nav" aria-label="Principal">
         <button class="nav-link active" type="button" data-scroll-target="inicio">Inicio</button>
         <button class="nav-link" type="button" data-scroll-target="mascotas">Mascotas</button>
-        <button class="nav-link" type="button" data-scroll-target="como-funciona">Como funciona?</button>
+        <button class="nav-link" type="button" data-scroll-target="como-funciona">¿Como funciona?</button>
       </nav>
       <div class="header-actions">
         <button class="button-secondary" type="button" data-auth-open="login">Iniciar sesion</button>
@@ -397,14 +397,14 @@ function renderHeroSection() {
     <section class="hero-section" id="inicio">
       <div class="hero-grid">
         <article class="hero-copy">
-          <span class="eyebrow">Plataforma de adopcion responsable</span>
+          <span class="eyebrow"></span>
           <h1 class="hero-title">Encuentra a tu <em>alma gemela</em> peluda</h1>
           <p class="hero-subtitle">
             Conectamos personas con mascotas que buscan un hogar lleno de amor. Rapido, claro y construido para una adopcion transparente.
           </p>
           <div class="hero-actions">
             <button class="button-primary large" type="button" data-scroll-target="mascotas">Ver mascotas disponibles</button>
-            <button class="button-link" type="button" data-scroll-target="como-funciona">Como funciona?</button>
+            <button class="button-link" type="button" data-scroll-target="como-funciona">¿Como funciona?</button>
           </div>
         </article>
         <aside class="hero-showcase">
@@ -519,7 +519,7 @@ function renderStepsSection() {
   return `
     <section class="landing-section" id="como-funciona">
       <div class="section-head">
-        <h2 class="section-title">Como funciona?</h2>
+        <h2 class="section-title">¿Como funciona?</h2>
         <p class="section-copy">Tres pasos hacia tu nuevo mejor amigo.</p>
       </div>
       <div class="process-grid">
@@ -605,6 +605,8 @@ function renderFooter() {
         <strong>CEPETS</strong>
       </div>
       <p>Plataforma de adopcion responsable construida para conectar hogares con segundas oportunidades.</p>
+      <br>
+        <p> © chai[dev]</p>
     </footer>
   `;
 }
@@ -619,11 +621,11 @@ function renderLoginPanel() {
     <form id="login-form" class="form-stack auth-form">
       <div class="field">
         <label for="email">Correo</label>
-        <input id="email" name="email" type="email" placeholder="admin@cepets.local" required />
+        <input id="email" name="email" type="email" placeholder="usuario@correo.com" required />
       </div>
       <div class="field">
         <label for="password">Contrasena</label>
-        <input id="password" name="password" type="password" placeholder="Cepets2026!" required />
+        <input id="password" name="password" type="password" placeholder="ingresa tu contraseña" required />
       </div>
       <button class="button-primary" type="submit">Entrar a CEPETS</button>
     </form>

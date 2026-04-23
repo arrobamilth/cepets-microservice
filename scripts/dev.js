@@ -1,5 +1,6 @@
 const { spawn } = require('node:child_process');
 const path = require('node:path');
+const { Client } = require('pg');
 
 const rootDir = path.resolve(__dirname, '..');
 const defaultDatabaseUrl = process.env.DATABASE_URL || 'postgresql://cepets:cepets@localhost:5432/cepets';
@@ -63,33 +64,77 @@ function shutdown(code = 0) {
   }, 500);
 }
 
-for (const service of services) {
-  const child = spawn(process.execPath, [service.script], {
-    cwd: rootDir,
-    env: {
-      ...process.env,
-      DATABASE_URL: process.env.DATABASE_URL || defaultDatabaseUrl
-    },
-    stdio: ['ignore', 'pipe', 'pipe']
-  });
+function formatDatabaseHint(databaseUrl) {
+  try {
+    const parsed = new URL(databaseUrl);
+    return `${parsed.hostname}:${parsed.port || '5432'}`;
+  } catch (error) {
+    return databaseUrl;
+  }
+}
 
-  child.stdout.on('data', (chunk) => prefixOutput(service.name, chunk));
-  child.stderr.on('data', (chunk) => prefixOutput(service.name, chunk, process.stderr));
-  child.on('exit', (code) => {
-    if (shuttingDown) {
-      return;
-    }
+async function verifyDatabaseConnection(databaseUrl) {
+  const client = new Client({ connectionString: databaseUrl });
 
-    prefixOutput(
-      service.name,
-      `Proceso finalizado con codigo ${code}. Se detendra el entorno completo.`,
-      process.stderr
+  try {
+    await client.connect();
+    await client.query('SELECT 1');
+  } finally {
+    await client.end().catch(() => {});
+  }
+}
+
+async function main() {
+  const databaseUrl = process.env.DATABASE_URL || defaultDatabaseUrl;
+
+  try {
+    await verifyDatabaseConnection(databaseUrl);
+  } catch (error) {
+    const locationHint = formatDatabaseHint(databaseUrl);
+    console.error(
+      [
+        `No se pudo conectar a PostgreSQL en ${locationHint}.`,
+        'Antes de ejecutar `npm run dev`, levanta la base local con `npm run db:up`.',
+        'Si es la primera vez o reiniciaste los volumenes, ejecuta despues `npm run db:init`.',
+        'Si prefieres usar el stack de produccion ya levantado, abre `http://localhost:8080` en lugar de `npm run dev`.'
+      ].join('\n')
     );
-    shutdown(code || 1);
-  });
+    process.exit(1);
+  }
 
-  children.push(child);
+  for (const service of services) {
+    const child = spawn(process.execPath, [service.script], {
+      cwd: rootDir,
+      env: {
+        ...process.env,
+        DATABASE_URL: databaseUrl
+      },
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+
+    child.stdout.on('data', (chunk) => prefixOutput(service.name, chunk));
+    child.stderr.on('data', (chunk) => prefixOutput(service.name, chunk, process.stderr));
+    child.on('exit', (code) => {
+      if (shuttingDown) {
+        return;
+      }
+
+      prefixOutput(
+        service.name,
+        `Proceso finalizado con codigo ${code}. Se detendra el entorno completo.`,
+        process.stderr
+      );
+      shutdown(code || 1);
+    });
+
+    children.push(child);
+  }
 }
 
 process.on('SIGINT', () => shutdown(0));
 process.on('SIGTERM', () => shutdown(0));
+
+main().catch((error) => {
+  console.error(error.message);
+  process.exit(1);
+});

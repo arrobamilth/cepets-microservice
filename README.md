@@ -62,6 +62,12 @@ npm run db:init
 npm run dev
 ```
 
+Si quieres hacer las tres cosas seguidas en un solo comando, tambien puedes usar:
+
+```bash
+npm run dev:with-db
+```
+
 ### Opcion 2: Todo con Docker Compose
 
 ```bash
@@ -86,6 +92,14 @@ Si no defines `DATABASE_URL`, el entorno local usa por defecto:
 
 ```text
 postgresql://cepets:cepets@localhost:5432/cepets
+```
+
+Si `npm run dev` muestra un error de conexion a `localhost:5432`, significa que PostgreSQL local no esta corriendo todavia. En ese caso:
+
+```bash
+npm run db:up
+npm run db:init
+npm run dev
 ```
 
 ### Instalacion de dependencias
