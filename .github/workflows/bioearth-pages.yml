@@ -1,0 +1,192 @@
+name: Deploy BioEarth Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/bioearth/**
+      - apps/bioearth-template-style/**
+      - apps/bioearth-seoly-motion/**
+      - .github/workflows/bioearth-pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: bioearth-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build BioEarth versions
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf pages
+          mkdir -p pages
+
+          for app in bioearth bioearth-template-style bioearth-seoly-motion; do
+            npm ci --prefix "apps/${app}"
+            npm run build --prefix "apps/${app}"
+            mkdir -p "pages/${app}"
+            cp -R "apps/${app}/dist/." "pages/${app}/"
+          done
+
+          cat > pages/index.html <<'HTML'
+          <!doctype html>
+          <html lang="es">
+            <head>
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <title>BioEarth | Versiones web</title>
+              <style>
+                :root {
+                  color: #10243d;
+                  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                }
+
+                body {
+                  margin: 0;
+                  min-height: 100vh;
+                  background:
+                    radial-gradient(circle at 82% 18%, rgba(69, 132, 237, 0.2), transparent 28%),
+                    radial-gradient(circle at 12% 82%, rgba(105, 195, 155, 0.24), transparent 26%),
+                    #f5fbff;
+                }
+
+                main {
+                  box-sizing: border-box;
+                  width: min(1120px, calc(100% - 32px));
+                  margin: 0 auto;
+                  padding: 72px 0;
+                }
+
+                h1 {
+                  max-width: 780px;
+                  margin: 0;
+                  font-size: clamp(40px, 6vw, 76px);
+                  line-height: 1;
+                  letter-spacing: -0.04em;
+                }
+
+                p {
+                  max-width: 700px;
+                  color: #49627d;
+                  font-size: 20px;
+                  line-height: 1.7;
+                }
+
+                .grid {
+                  display: grid;
+                  grid-template-columns: repeat(3, minmax(0, 1fr));
+                  gap: 22px;
+                  margin-top: 44px;
+                }
+
+                a {
+                  display: block;
+                  min-height: 220px;
+                  padding: 28px;
+                  border: 1px solid rgba(11, 79, 138, 0.12);
+                  border-radius: 18px;
+                  background: rgba(255, 255, 255, 0.82);
+                  color: inherit;
+                  text-decoration: none;
+                  box-shadow: 0 24px 70px rgba(7, 45, 82, 0.12);
+                  transition: transform 0.2s ease, box-shadow 0.2s ease;
+                }
+
+                a:hover {
+                  transform: translateY(-6px);
+                  box-shadow: 0 30px 90px rgba(7, 45, 82, 0.18);
+                }
+
+                span {
+                  display: inline-flex;
+                  margin-bottom: 22px;
+                  color: #0b4f8a;
+                  font-size: 13px;
+                  font-weight: 800;
+                  letter-spacing: 0.16em;
+                  text-transform: uppercase;
+                }
+
+                h2 {
+                  margin: 0;
+                  font-size: 28px;
+                }
+
+                small {
+                  display: block;
+                  margin-top: 18px;
+                  color: #64748b;
+                  font-size: 16px;
+                  line-height: 1.6;
+                }
+
+                @media (max-width: 840px) {
+                  .grid {
+                    grid-template-columns: 1fr;
+                  }
+                }
+              </style>
+            </head>
+            <body>
+              <main>
+                <h1>BioEarth, tres prototipos listos para revisar.</h1>
+                <p>Selecciona una versión para visualizar el sitio corporativo y portafolio de investigación científica en GitHub Pages.</p>
+                <section class="grid" aria-label="Versiones BioEarth">
+                  <a href="./bioearth/">
+                    <span>Versión 01</span>
+                    <h2>Premium científica</h2>
+                    <small>Azules profundos, naturaleza, tecnología y una presencia institucional elegante.</small>
+                  </a>
+                  <a href="./bioearth-template-style/">
+                    <span>Versión 02</span>
+                    <h2>Plantilla visual</h2>
+                    <small>Estética azul/coral, ilustraciones tipo startup y secciones de alto impacto.</small>
+                  </a>
+                  <a href="./bioearth-seoly-motion/">
+                    <span>Versión 03</span>
+                    <h2>Motion Seoly</h2>
+                    <small>Gradientes pastel, animaciones al scroll y bandas en carrusel permanente.</small>
+                  </a>
+                </section>
+              </main>
+            </body>
+          </html>
+          HTML
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

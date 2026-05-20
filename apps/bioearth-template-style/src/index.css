@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background: #ffffff;
+    color: #191c2e;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  ::selection {
+    background: rgba(255, 107, 97, 0.24);
+  }
+}
+
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-bio-blue;
+  }
+
+  .section-title {
+    @apply max-w-3xl text-3xl font-extrabold leading-tight text-bio-ink sm:text-4xl lg:text-5xl;
+  }
+
+  .section-copy {
+    @apply max-w-3xl text-base leading-8 text-bio-muted sm:text-lg;
+  }
+
+  .template-card {
+    @apply rounded-[8px] bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-hover;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
